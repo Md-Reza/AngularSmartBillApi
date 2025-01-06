@@ -1,0 +1,18 @@
+{
+  "DesktopClientID": "DC01",
+  "DesktopClientName": "SmartBill Desktop",
+  "DesktopClientVersion": "v1.0.0",
+  "IsDesktopClientEnabled": true,
+  "MobileClientID": "MC01",
+  "MobileClientName": "SmartBill Mobile",
+  "MobileClientVersion": "v1.0.0",
+  "IsMobileClientEnabled": true,
+  "WebClientID": "WC01",
+  "WebClientName": "SmartBill Web",
+  "WebClientVersion": "v1.0.0",
+  "IsWebClientEnabled": true,
+  "EnforceToCheckVersion": true,
+  "ServiceName": "SmartBill API Service",
+  "ServiceVersion": "v1.0.0",
+  "IsServiceEnabled": true
+}
