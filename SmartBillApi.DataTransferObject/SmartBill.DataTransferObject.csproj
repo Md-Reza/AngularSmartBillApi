@@ -45,6 +45,7 @@
     <Compile Include="Core\StringEntension.cs" />
     <Compile Include="DtoModel\CategoryDto.cs" />
     <Compile Include="DtoModel\LoginDto.cs" />
+    <Compile Include="DtoModel\SupplierDto.cs" />
     <Compile Include="DtoModel\UserEntryDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel\ApplicationClientViewModel.cs" />
@@ -52,6 +53,7 @@
     <Compile Include="ViewModel\CategoryViewModel.cs" />
     <Compile Include="ViewModel\LoginSessionViewModel.cs" />
     <Compile Include="ViewModel\ResponseViewModel.cs" />
+    <Compile Include="ViewModel\SupplierViewModel.cs" />
     <Compile Include="ViewModel\UserViewModel.cs" />
   </ItemGroup>
   <ItemGroup />

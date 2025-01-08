@@ -35,5 +35,29 @@ namespace SmartBill.APIService.Repository
             sqlConnection.Close();
             return data;
         }
+
+        public async Task<IEnumerable<Supplier>> GetAllSupplier()
+        {
+            var sqlQuery = @"Select * FROM MasterData.Category";
+            var data = await sqlConnection.QueryAsync<Supplier>(sqlQuery).ConfigureAwait(false);
+            sqlConnection.Close();
+            return data;
+        }
+
+        public async Task ExcuteSupplier(SupplierDto supplier, string changedBy)
+        {
+           await sqlConnection.ExecuteScalarAsync("MasterData.usp_Supplier", new
+            {
+                @SupplierID = supplier.SupplierID,
+                @Name = supplier.Name,
+                @Address = supplier.Address,
+                @ContactNumber = supplier.ContactNumber,
+                @OpeningReceivable = supplier.OpeningReceivable,
+                @OpeningPayable = supplier.OpeningPayable,
+                @Inactive = supplier.Inactive,
+                @CreatedBy = changedBy
+            }, commandType: CommandType.StoredProcedure);
+            sqlConnection.Close();
+        }
     }
 }

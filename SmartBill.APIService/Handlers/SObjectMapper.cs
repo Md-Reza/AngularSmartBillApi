@@ -12,6 +12,7 @@ namespace SmartBill.APIService.Handlers
             CreateMap<User, LoginSessionViewModel>();
             CreateMap<Category, CategoryViewModel>();
             CreateMap<User, UserViewModel>();
+            CreateMap<Supplier, SupplierViewModel>();
         }
 
     }
