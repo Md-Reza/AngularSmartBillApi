@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using SmartBill.APIService.Entities;
 using SmartBillApi.DataTransferObject.ViewModel;
-using System.Reflection;
 
 namespace SmartBill.APIService.Handlers
 {
@@ -13,6 +12,7 @@ namespace SmartBill.APIService.Handlers
             CreateMap<Category, CategoryViewModel>();
             CreateMap<User, UserViewModel>();
             CreateMap<Supplier, SupplierViewModel>();
+            CreateMap<SubCategory, SubCategoryViewModel>();
         }
 
     }

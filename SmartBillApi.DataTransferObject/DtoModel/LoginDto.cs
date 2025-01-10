@@ -9,7 +9,7 @@ namespace SmartBillApi.DataTransferObject.DtoModel
         public string UserNameIDEmpID { get; set; }
 
         [Required(ErrorMessage = "Password is required")]
-        [StringLength(maximumLength: 20, MinimumLength = 4)]
+        [StringLength(maximumLength: 20, MinimumLength = 2)]
         [DataType(DataType.Password)]
         public string Password { get; set; }
         
