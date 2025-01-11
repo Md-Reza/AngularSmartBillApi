@@ -12,7 +12,8 @@ namespace SmartBill.APIService.Handlers
             CreateMap<Category, CategoryViewModel>();
             CreateMap<User, UserViewModel>();
             CreateMap<Supplier, SupplierViewModel>();
-            CreateMap<SubCategory, SubCategoryViewModel>();
+            CreateMap<SubCategory, SubCategoryViewModel>()
+                .ForMember(dest => dest.CategoryViewModel, opt => opt.MapFrom(src => src.Category));
         }
 
     }

@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿using AutoMapper;
+using Dapper;
 using Microsoft.Data.SqlClient;
 using SmartBill.APIService.Entities;
 using SmartBill.APIService.Interface;
@@ -46,7 +47,7 @@ namespace SmartBill.APIService.Repository
 
         public async Task ExcuteSupplierAsync(SupplierDto supplier, string changedBy)
         {
-           await sqlConnection.ExecuteScalarAsync("MasterData.usp_Supplier", new
+            await sqlConnection.ExecuteScalarAsync("MasterData.usp_Supplier", new
             {
                 @SupplierID = supplier.SupplierID,
                 @Name = supplier.Name,
@@ -71,8 +72,25 @@ namespace SmartBill.APIService.Repository
 
         public async Task<IEnumerable<SubCategory>> GetSubCategoriesAsync()
         {
-            var sqlQuery = @"Select * FROM MasterData.SubCategory";
-            var data = await sqlConnection.QueryAsync<SubCategory>(sqlQuery).ConfigureAwait(false);
+            var sqlQuery = @"Select 
+	                              sc.SubCategoryID
+                                  ,sc.Name
+                                  ,sc.Description
+                                  ,sc.Inactive
+                                  ,sc.CreatedBy
+                                  ,sc.CreatedDate
+                                  ,sc.ModifiedBy
+                                  ,sc.ModifiedDate
+	                              ,ct.CategoryID
+	                              ,ct.Name
+                            FROM MasterData.SubCategory AS sc
+                            INNER JOIN MasterData.Category AS ct ON sc.CategoryID=ct.CategoryID";
+            var data = await sqlConnection.QueryAsync(sqlQuery, map: (SubCategory sc, Category ct) =>
+            {
+                sc.Category = ct;
+                return sc;
+            },
+                splitOn: "CategoryID").ConfigureAwait(false);
             sqlConnection.Close();
             return data;
         }
