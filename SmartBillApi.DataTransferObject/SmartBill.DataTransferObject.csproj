@@ -42,11 +42,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\EnumExtension.cs" />
     <Compile Include="Core\StringEntension.cs" />
     <Compile Include="DtoModel\CategoryDto.cs" />
     <Compile Include="DtoModel\LoginDto.cs" />
     <Compile Include="DtoModel\SubCategoryDto.cs" />
     <Compile Include="DtoModel\SupplierDto.cs" />
+    <Compile Include="DtoModel\UnitTypeDto.cs" />
     <Compile Include="DtoModel\UserEntryDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel\ApplicationClientViewModel.cs" />
@@ -56,6 +58,7 @@
     <Compile Include="ViewModel\ResponseViewModel.cs" />
     <Compile Include="ViewModel\SubCategoryViewModel.cs" />
     <Compile Include="ViewModel\SupplierViewModel.cs" />
+    <Compile Include="ViewModel\UnitTypeViewModel.cs" />
     <Compile Include="ViewModel\UserViewModel.cs" />
   </ItemGroup>
   <ItemGroup />

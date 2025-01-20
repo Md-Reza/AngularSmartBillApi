@@ -14,6 +14,6 @@ namespace SmartBillApi.DataTransferObject.DtoModel
         public string ContactNumber { get; set; }
         public int OpeningReceivable { get; set; }
         public int OpeningPayable { get; set; }
-        public byte Inactive { get; set; }
+        public bool Inactive { get; set; }
     }
 }

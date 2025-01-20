@@ -117,5 +117,36 @@ namespace SmartBill.APIService.Repository
             var data = await sqlConnection.QueryAsync<SubCategory>(sql, param: new { @SubCategoryIDName = subCategoryIDName }).ConfigureAwait(false);
             return data.FirstOrDefault();
         }
+
+        public async Task<IEnumerable<UnitType>> GetUnitTypesAsync()
+        {
+            var sqlQuery = @"Select * FROM MasterData.UnitType";
+            var data = await sqlConnection.QueryAsync<UnitType>(sqlQuery).ConfigureAwait(false);
+            sqlConnection.Close();
+            return data;
+        }
+
+        public async Task<UnitType> GetUnitTypeAsync(string unitTypeIDName)
+        {
+            var sql = @"SELECT * FROM MasterData.UnitType
+                    WHERE (Name = @UnitTypeIDName)
+                    OR (CAST(UnitTypeID AS NVARCHAR(50)) = @UnitTypeIDName)";
+            var data = await sqlConnection.QueryAsync<UnitType>(sql, param: new { @UnitTypeIDName = unitTypeIDName }).ConfigureAwait(false);
+            return data.FirstOrDefault();
+        }
+
+        public async Task ExecuteUnitTypeAsync(UnitTypeDto unitTypeDto, string createdBy)
+        {
+            await sqlConnection.ExecuteScalarAsync("MasterData.usp_UnitType", new
+            {
+                @UnitTypeID = unitTypeDto.UnitTypeID,
+                @Name = unitTypeDto.Name,
+                @MeasurementUnit = unitTypeDto.MeasurementUnit,
+                @MeasurementQty = unitTypeDto.MeasurementQty,
+                @Inactive = unitTypeDto.Inactive,
+                @CreatedBy = createdBy
+            }, commandType: CommandType.StoredProcedure);
+            sqlConnection.Close();
+        }
     }
 }

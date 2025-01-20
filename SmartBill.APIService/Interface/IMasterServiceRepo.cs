@@ -13,5 +13,8 @@ namespace SmartBill.APIService.Interface
         Task<IEnumerable<SubCategory>> GetSubCategoriesAsync();
         Task ExecuteSubCategoryAsync(SubCategoryDto subCategoryDto, string createdBy);
         Task<SubCategory> GetSubCategorieAsync(string subCategoryIDName);
+        Task<IEnumerable<UnitType>> GetUnitTypesAsync();
+        Task<UnitType> GetUnitTypeAsync(string unitTypeIDName);
+        Task ExecuteUnitTypeAsync(UnitTypeDto unitTypeDto, string createdBy);
     }
 }

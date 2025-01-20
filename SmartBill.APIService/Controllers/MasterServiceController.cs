@@ -125,5 +125,46 @@ namespace SmartBill.APIService.Controllers
                 return this.SBadRequest(ex.Message);
             }
         }
+
+        #region Unit Type
+
+        [HttpGet("UnitTypes")]
+        public async Task<IActionResult> GetUnitTypesAsync()
+        {
+            try
+            {
+                var data = await masterServiceRepo.GetUnitTypesAsync();
+                if (!data.Any())
+                    this.SBadRequest(SMessageHandler.NoRecord());
+                return this.SSuccess(mapper.Map<List<UnitTypeViewModel>>(data));
+            }
+            catch (Exception ex)
+            {
+                return this.SBadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("SaveUnitType")]
+        public async Task<IActionResult> SaveUnitTypeAsync(UnitTypeDto unitTypeDto)
+        {
+            if (!ModelState.IsValid)
+                return this.SBadRequest(ModelState);
+            string changedBy = this.GetDisplayName();
+            if (unitTypeDto == null)
+                return this.SBadRequest("No data found to save");
+
+            var checkUnitType = await masterServiceRepo.GetUnitTypeAsync(unitTypeDto.Name);
+            if (unitTypeDto!= null)
+                return this.SBadRequest($"Already Exists Unit Type: {unitTypeDto.Name}");
+
+            using (TransactionScope transaction = new(TransactionScopeAsyncFlowOption.Enabled))
+            {
+                await masterServiceRepo.ExecuteUnitTypeAsync(unitTypeDto, changedBy);
+                transaction.Complete();
+            }
+            return this.SSuccess(SMessageHandler.RecordSaved);
+        }
+
+        #endregion
     }
 }
