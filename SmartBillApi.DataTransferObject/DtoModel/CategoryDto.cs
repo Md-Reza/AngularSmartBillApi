@@ -8,7 +8,7 @@ namespace SmartBillApi.DataTransferObject.DtoModel
         public long CategoryID { get; set; }
         [Required]
         public string Name { get; set; }
-        public bool Inactive { get; set; }
+        public bool Inactive { get; set; } 
         public string Description { get; set; }
     }
 }

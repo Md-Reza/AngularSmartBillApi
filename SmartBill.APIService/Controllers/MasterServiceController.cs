@@ -14,7 +14,7 @@ namespace SmartBill.APIService.Controllers
     [ApiController]
     public class MasterServiceController(IMapper mapper, IMasterServiceRepo masterServiceRepo) : ControllerBase
     {
-        [HttpPost("SaveCategory")]
+        [HttpPost("SaveCategorie")]
         public async Task<IActionResult> SaveCategoryAsync(CategoryDto categoryDto)
         {
             if (!ModelState.IsValid)
@@ -35,6 +35,34 @@ namespace SmartBill.APIService.Controllers
                 await masterServiceRepo.ExecuteCategoryAsync(categoryDto, changedBy);
                 transaction.Complete();
             }
+            return this.SSuccess(SMessageHandler.RecordSaved);
+        }
+
+        [HttpPost("SaveCategories")]
+        public async Task<IActionResult> SaveCategorysAsync(List<CategoryDto> categoryDto)
+        {
+            if (!ModelState.IsValid)
+                return this.SBadRequest(ModelState);
+            string changedBy = this.GetDisplayName();
+            if (categoryDto == null)
+                return this.SBadRequest("No category data found to save");
+
+            if (!categoryDto.Any())
+                return this.SBadRequest($"Nothing found to save.");
+
+            using (TransactionScope transaction = new(TransactionScopeAsyncFlowOption.Enabled))
+            {
+                foreach (var item in categoryDto)
+                {
+                    var category = await masterServiceRepo.GetCategorieAsync(item.Name);
+                    if (category != null)
+                        item.CategoryID = category.CategoryID;
+
+                    await masterServiceRepo.ExecuteCategoryAsync(item, changedBy);
+                }
+                transaction.Complete();
+            }
+
             return this.SSuccess(SMessageHandler.RecordSaved);
         }
 
@@ -154,7 +182,7 @@ namespace SmartBill.APIService.Controllers
                 return this.SBadRequest("No data found to save");
 
             var checkUnitType = await masterServiceRepo.GetUnitTypeAsync(unitTypeDto.Name);
-            if (unitTypeDto!= null)
+            if (unitTypeDto != null)
                 return this.SBadRequest($"Already Exists Unit Type: {unitTypeDto.Name}");
 
             using (TransactionScope transaction = new(TransactionScopeAsyncFlowOption.Enabled))

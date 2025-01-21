@@ -10,7 +10,7 @@ namespace SmartBill.APIService.Handlers
         public static BadRequestObjectResult SBadRequest(this ControllerBase controllerBase, string message)
         {
             if (string.IsNullOrEmpty(message) || message.Length <= 0)
-                message = "Invalid exception message catch by STEX Service";
+                message = "Invalid exception message catch by SBILL Service";
 
             ResponseViewModel responseViewModel = new()
             {
@@ -26,7 +26,7 @@ namespace SmartBill.APIService.Handlers
         public static OkObjectResult SSuccess(this ControllerBase controllerBase, string message)
         {
             if (string.IsNullOrEmpty(message) || message.Length <= 0)
-                message = "Invalid exception message catch by STEX Service";
+                message = "Invalid exception message catch by SBILL Service";
 
             ResponseViewModel responseViewModel = new()
             {
