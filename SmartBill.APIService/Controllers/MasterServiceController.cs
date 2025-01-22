@@ -14,6 +14,21 @@ namespace SmartBill.APIService.Controllers
     [ApiController]
     public class MasterServiceController(IMapper mapper, IMasterServiceRepo masterServiceRepo) : ControllerBase
     {
+        [HttpGet("DownloadCategoryTemplate")]
+        public IActionResult CategoryDownloadExcelAsync()
+        {
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Resources", "Category_Upload_Template.xlsx");
+
+            if (!System.IO.File.Exists(filePath))
+            {
+                return this.SBadRequest("File not found.");
+            }
+
+            var fileBytes = System.IO.File.ReadAllBytes(filePath);
+            var fileName = "Category_Upload_Template.xlsx";
+            return File(fileBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+        }
+
         [HttpPost("SaveCategorie")]
         public async Task<IActionResult> SaveCategoryAsync(CategoryDto categoryDto)
         {
