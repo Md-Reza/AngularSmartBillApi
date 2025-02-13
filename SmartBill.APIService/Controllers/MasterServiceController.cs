@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SmartBill.APIService.Entities;
 using SmartBill.APIService.Handlers;
 using SmartBill.APIService.Interface;
 using SmartBillApi.DataTransferObject.DtoModel;
@@ -206,6 +207,49 @@ namespace SmartBill.APIService.Controllers
                 transaction.Complete();
             }
             return this.SSuccess(SMessageHandler.RecordSaved);
+        }
+
+        #endregion
+
+        #region product 
+        [HttpPost("SaveProduct")]
+        public async Task<IActionResult> SaveProductAsync(ProductDto productDto)
+        {
+            if (!ModelState.IsValid)
+                return this.SBadRequest(ModelState);
+            string changedBy = this.GetDisplayName();
+            if (productDto == null)
+                return this.SBadRequest("No product data found to save");
+
+            if (productDto.PurchasePrice > productDto.SalePrice)
+                return this.SBadRequest("Sale price should not be less than purchase cost.");
+
+            var data = masterServiceRepo.GetProductAsync(productDto.SKUID);
+            if (data != null)
+                return this.SBadRequest($"Already Exists this SKU: {productDto.SKUID}");
+
+            using (TransactionScope transaction = new(TransactionScopeAsyncFlowOption.Enabled))
+            {
+                await masterServiceRepo.ExecuteProductAsync(productDto, changedBy);
+                transaction.Complete();
+            }
+            return this.SSuccess(SMessageHandler.RecordSaved);
+        }
+
+        [HttpGet("Products")]
+        public async Task<IActionResult> GetProductsAsync()
+        {
+            try
+            {
+                var data = await masterServiceRepo.GetProductsAsync();
+                if (!data.Any())
+                    this.SBadRequest(SMessageHandler.NoRecord());
+                return this.SSuccess(mapper.Map<List<ProductViewModel>>(data));
+            }
+            catch (Exception ex)
+            {
+                return this.SBadRequest(ex.Message);
+            }
         }
 
         #endregion

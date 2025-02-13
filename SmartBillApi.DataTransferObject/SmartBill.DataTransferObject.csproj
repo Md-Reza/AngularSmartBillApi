@@ -46,6 +46,7 @@
     <Compile Include="Core\StringEntension.cs" />
     <Compile Include="DtoModel\CategoryDto.cs" />
     <Compile Include="DtoModel\LoginDto.cs" />
+    <Compile Include="DtoModel\ProductDto.cs" />
     <Compile Include="DtoModel\SubCategoryDto.cs" />
     <Compile Include="DtoModel\SupplierDto.cs" />
     <Compile Include="DtoModel\UnitTypeDto.cs" />
@@ -55,6 +56,7 @@
     <Compile Include="ViewModel\BaseEntityViewModel.cs" />
     <Compile Include="ViewModel\CategoryViewModel.cs" />
     <Compile Include="ViewModel\LoginSessionViewModel.cs" />
+    <Compile Include="ViewModel\ProductViewModel.cs" />
     <Compile Include="ViewModel\ResponseViewModel.cs" />
     <Compile Include="ViewModel\SubCategoryViewModel.cs" />
     <Compile Include="ViewModel\SupplierViewModel.cs" />

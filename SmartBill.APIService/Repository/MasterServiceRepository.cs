@@ -148,5 +148,46 @@ namespace SmartBill.APIService.Repository
             }, commandType: CommandType.StoredProcedure);
             sqlConnection.Close();
         }
+
+        public async Task ExecuteProductAsync(ProductDto productDto, string createdBy)
+        {
+            await sqlConnection.ExecuteScalarAsync("MasterData.usp_Product", new
+            {
+                @ProductID = productDto.ProductID,
+                @Name = productDto.Name,
+                @SKUID = productDto.SKUID,
+                @SupplierID = productDto.SupplierID,
+                @CategoryID = productDto.CategoryID,
+                @SizeID = productDto.SizeID,
+                @UnitTypeID = productDto.UnitTypeID,
+                @AlertQty = productDto.AlertQty,
+                @PurchasePrice = productDto.PurchasePrice,
+                @SalePrice = productDto.SalePrice,
+                @Description = productDto.Description,
+                @ImagePath = productDto.ImagePath,
+                @ImageName = productDto.ImageName,
+                @Inactive = productDto.Inactive,
+                @CreatedBy = createdBy
+            }, commandType: CommandType.StoredProcedure);
+            sqlConnection.Close();
+        }
+
+        public async Task<Product> GetProductAsync(string productCode)
+        {
+            var sql = @"Select *
+                        from MasterData.Product
+                         WHERE (ProductID = @ProductID)
+                         OR (CAST(SKUID AS NVARCHAR(50)) = @ProductID)";
+            var data = await sqlConnection.QueryAsync<Product>(sql, param: new { @ProductID = productCode }).ConfigureAwait(false);
+            return data.FirstOrDefault();
+        }
+
+        public async Task<IEnumerable<Product>> GetProductsAsync()
+        {
+            var sqlQuery = @"Select * FROM MasterData.Product";
+            var data = await sqlConnection.QueryAsync<Product>(sqlQuery).ConfigureAwait(false);
+            sqlConnection.Close();
+            return data;
+        }
     }
 }

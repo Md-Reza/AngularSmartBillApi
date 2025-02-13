@@ -16,5 +16,8 @@ namespace SmartBill.APIService.Interface
         Task<IEnumerable<UnitType>> GetUnitTypesAsync();
         Task<UnitType> GetUnitTypeAsync(string unitTypeIDName);
         Task ExecuteUnitTypeAsync(UnitTypeDto unitTypeDto, string createdBy);
+        Task ExecuteProductAsync(ProductDto productDto, string createdBy);
+        Task<Product> GetProductAsync(string productCode);
+        Task<IEnumerable<Product>> GetProductsAsync();
     }
 }
