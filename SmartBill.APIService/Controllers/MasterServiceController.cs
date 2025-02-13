@@ -236,13 +236,16 @@ namespace SmartBill.APIService.Controllers
                 if (!Directory.Exists(folderPath))
                     Directory.CreateDirectory(folderPath);
 
-                var filePath = Path.Combine(folderPath, formFile.FileName);
+                var uniqueFileName = $"{productDto.SKUID}_{formFile.FileName}"; 
+
+                var filePath = Path.Combine(folderPath, uniqueFileName);
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     await formFile.CopyToAsync(stream);
                 }
+
                 productDto.ImagePath = filePath;
-                productDto.ImageName = formFile.FileName;
+                productDto.ImageName = uniqueFileName;
 
                 await masterServiceRepo.ExecuteProductAsync(productDto, changedBy);
                 transaction.Complete();
