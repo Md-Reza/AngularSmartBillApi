@@ -6,6 +6,7 @@ using SmartBill.APIService.Handlers;
 using SmartBill.APIService.Interface;
 using SmartBillApi.DataTransferObject.DtoModel;
 using SmartBillApi.DataTransferObject.ViewModel;
+using System.Runtime.Intrinsics.Arm;
 using System.Transactions;
 
 namespace SmartBill.APIService.Controllers
@@ -213,7 +214,7 @@ namespace SmartBill.APIService.Controllers
 
         #region product 
         [HttpPost("SaveProduct")]
-        public async Task<IActionResult> SaveProductAsync(ProductDto productDto)
+        public async Task<IActionResult> SaveProductAsync(ProductDto productDto, IFormFile formFile)
         {
             if (!ModelState.IsValid)
                 return this.SBadRequest(ModelState);
@@ -230,6 +231,19 @@ namespace SmartBill.APIService.Controllers
 
             using (TransactionScope transaction = new(TransactionScopeAsyncFlowOption.Enabled))
             {
+
+                var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
+                if (!Directory.Exists(folderPath))
+                    Directory.CreateDirectory(folderPath);
+
+                var filePath = Path.Combine(folderPath, formFile.FileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await formFile.CopyToAsync(stream);
+                }
+                productDto.ImagePath = filePath;
+                productDto.ImageName = formFile.FileName;
+
                 await masterServiceRepo.ExecuteProductAsync(productDto, changedBy);
                 transaction.Complete();
             }
