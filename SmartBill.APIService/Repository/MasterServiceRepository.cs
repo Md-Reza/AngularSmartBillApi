@@ -189,5 +189,16 @@ namespace SmartBill.APIService.Repository
             sqlConnection.Close();
             return data;
         }
+
+        public async Task<string> GetBarcodeTagAsync(long prefixID)
+        {
+            string sqlQuery = @"DECLARE @PrefixID BIGINT
+                                EXEC MasterData.usp_GetAutoID 206
+				                                  ,@PrefixID OUTPUT
+                            SELECT @PrefixID";
+            string barcodeTag =await sqlConnection.ExecuteScalarAsync<string>(sqlQuery);
+            sqlConnection.Close();
+            return barcodeTag;
+        }
     }
 }

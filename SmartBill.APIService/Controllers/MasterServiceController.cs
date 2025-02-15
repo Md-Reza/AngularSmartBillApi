@@ -1,12 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SmartBill.APIService.Entities;
 using SmartBill.APIService.Handlers;
 using SmartBill.APIService.Interface;
 using SmartBillApi.DataTransferObject.DtoModel;
 using SmartBillApi.DataTransferObject.ViewModel;
-using System.Runtime.Intrinsics.Arm;
 using System.Transactions;
 
 namespace SmartBill.APIService.Controllers
@@ -262,6 +260,22 @@ namespace SmartBill.APIService.Controllers
                 if (!data.Any())
                     this.SBadRequest(SMessageHandler.NoRecord());
                 return this.SSuccess(mapper.Map<List<ProductViewModel>>(data));
+            }
+            catch (Exception ex)
+            {
+                return this.SBadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("Barcode/{prefix}")]
+        public async Task<IActionResult> GetBarcodeAsync(long prefix)
+        {
+            try
+            {
+                var data = await masterServiceRepo.GetBarcodeTagAsync(prefix);
+                if (!data.Any())
+                    this.SBadRequest(SMessageHandler.NoRecord());
+                return Ok(data);
             }
             catch (Exception ex)
             {

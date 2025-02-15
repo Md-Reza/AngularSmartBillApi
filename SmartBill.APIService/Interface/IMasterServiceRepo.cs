@@ -19,5 +19,6 @@ namespace SmartBill.APIService.Interface
         Task ExecuteProductAsync(ProductDto productDto, string createdBy);
         Task<Product> GetProductAsync(string productCode);
         Task<IEnumerable<Product>> GetProductsAsync();
+        Task<string> GetBarcodeTagAsync(long prefixID);
     }
 }
