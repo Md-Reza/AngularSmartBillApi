@@ -16,8 +16,8 @@ namespace SmartBill.APIService.Handlers
                 .ForMember(dest => dest.CategoryViewModel, opt => opt.MapFrom(src => src.Category));
             CreateMap<UnitType, UnitTypeViewModel>();
             CreateMap<Product, ProductViewModel>()
+                .ForMember(dest => dest.SupplierViewModel, opt => opt.MapFrom(src => src.Supplier))
                .ForMember(dest => dest.CategoryViewModel, opt => opt.MapFrom(src => src.Category))
-               .ForMember(dest => dest.SupplierViewModel, opt => opt.MapFrom(src => src.Supplier))
                .ForMember(dest => dest.UnitTypeViewModel, opt => opt.MapFrom(src => src.UnitType));
         }
 

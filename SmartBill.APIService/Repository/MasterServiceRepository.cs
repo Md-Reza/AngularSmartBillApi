@@ -183,8 +183,40 @@ namespace SmartBill.APIService.Repository
 
         public async Task<IEnumerable<Product>> GetProductsAsync()
         {
-            var sqlQuery = @"Select * FROM MasterData.Product";
-            var data = await sqlConnection.QueryAsync<Product>(sqlQuery).ConfigureAwait(false);
+            var sqlQuery = @"Select ProductID
+                              ,p.Name
+                              ,SKUID
+                              ,p.AlertQty
+                              ,p.PurchasePrice
+                              ,p.SalePrice
+                              ,p.Description
+                              ,p.ImagePath
+                              ,p.ImageName
+                              ,p.Inactive
+                              ,p.CreatedBy
+                              ,p.CreatedDate
+                              ,p.ModifiedBy
+                              ,p.ModifiedDate
+	                          ,s.SupplierID
+	                          ,s.Name
+	                          ,s.Address
+	                          ,s.ContactNumber
+	                          ,c.CategoryID
+	                          ,c.Name
+	                          ,u.UnitTypeID
+	                          ,u.Name
+                        FROM MasterData.Product as p
+                        INNER JOIN MasterData.Supplier AS s ON p.SupplierID=s.SupplierID
+                        INNER JOIN MasterData.Category AS c ON p.CategoryID=c.CategoryID
+                        INNER JOIN MasterData.UnitType AS u ON p.UnitTypeID=u.UnitTypeID";
+            var data = await sqlConnection.QueryAsync(sqlQuery, map: (Product p,Supplier s,Category c, UnitType u) =>
+            {
+                p.Supplier = s;
+                p.Category = c;
+                p.UnitType = u;
+                return p;
+            },
+                splitOn: "SupplierID,CategoryID,UnitTypeID").ConfigureAwait(false);
             sqlConnection.Close();
             return data;
         }
