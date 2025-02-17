@@ -212,7 +212,7 @@ namespace SmartBill.APIService.Controllers
 
         #region product 
         [HttpPost("SaveProduct")]
-        public async Task<IActionResult> SaveProductAsync(ProductDto productDto, IFormFile formFile)
+        public async Task<IActionResult> SaveProductAsync(ProductDto productDto)
         {
             if (!ModelState.IsValid)
                 return this.SBadRequest(ModelState);
@@ -223,7 +223,7 @@ namespace SmartBill.APIService.Controllers
             if (productDto.PurchasePrice > productDto.SalePrice)
                 return this.SBadRequest("Sale price should not be less than purchase cost.");
 
-            var data = masterServiceRepo.GetProductAsync(productDto.SKUID);
+            var data =await masterServiceRepo.GetProductAsync(productDto.SKUID);
             if (data != null)
                 return this.SBadRequest($"Already Exists this SKU: {productDto.SKUID}");
 
@@ -234,13 +234,20 @@ namespace SmartBill.APIService.Controllers
                 if (!Directory.Exists(folderPath))
                     Directory.CreateDirectory(folderPath);
 
-                var uniqueFileName = $"{productDto.SKUID}_{formFile.FileName}"; 
+                var uniqueFileName = $"{productDto.SKUID}_{productDto.ImageName}"; 
 
                 var filePath = Path.Combine(folderPath, uniqueFileName);
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await formFile.CopyToAsync(stream);
-                }
+
+                // Decode Base64 string to byte array
+                var base64Data = productDto.ImagePath.Split(',')[1];
+                byte[] imageBytes = Convert.FromBase64String(base64Data);
+
+                await System.IO.File.WriteAllBytesAsync(filePath, imageBytes);
+
+                //using (var stream = new FileStream(filePath, FileMode.Create))
+                //{
+                //    await formFile.CopyToAsync(stream);
+                //}
 
                 productDto.ImagePath = filePath;
                 productDto.ImageName = uniqueFileName;

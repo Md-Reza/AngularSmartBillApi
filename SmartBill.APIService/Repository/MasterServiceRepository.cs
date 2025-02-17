@@ -158,7 +158,6 @@ namespace SmartBill.APIService.Repository
                 @SKUID = productDto.SKUID,
                 @SupplierID = productDto.SupplierID,
                 @CategoryID = productDto.CategoryID,
-                @SizeID = productDto.SizeID,
                 @UnitTypeID = productDto.UnitTypeID,
                 @AlertQty = productDto.AlertQty,
                 @PurchasePrice = productDto.PurchasePrice,
