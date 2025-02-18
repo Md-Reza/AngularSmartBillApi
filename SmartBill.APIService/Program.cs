@@ -109,6 +109,7 @@ app.UseCors("corsOrigins");
 app.UseHsts();
 app.UseAuthentication();
 app.UseRouting();
+app.UseStaticFiles();
 app.UseAuthorization();
 app.UseHttpsRedirection();
 app.MapControllers();

@@ -12,8 +12,9 @@ namespace SmartBill.APIService.Controllers
     [Authorize]
     [Route("SBILL/[controller]")]
     [ApiController]
-    public class MasterServiceController(IMapper mapper, IMasterServiceRepo masterServiceRepo) : ControllerBase
+    public class MasterServiceController(IMapper mapper, IMasterServiceRepo masterServiceRepo, IWebHostEnvironment webHostEnvironment) : ControllerBase
     {
+
         [HttpGet("DownloadCategoryTemplate")]
         public IActionResult CategoryDownloadExcelAsync()
         {
@@ -223,24 +224,34 @@ namespace SmartBill.APIService.Controllers
             if (productDto.PurchasePrice > productDto.SalePrice)
                 return this.SBadRequest("Sale price should not be less than purchase cost.");
 
-            var data =await masterServiceRepo.GetProductAsync(productDto.SKUID);
+            var data = await masterServiceRepo.GetProductAsync(productDto.SKUID);
             if (data != null)
                 return this.SBadRequest($"Already Exists this SKU: {productDto.SKUID}");
 
             using (TransactionScope transaction = new(TransactionScopeAsyncFlowOption.Enabled))
             {
+                var hostUrl = $"{this.Request.Scheme}://{this.Request.Host}{this.Request.PathBase}";
+                // var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
+                var folderPath = GetFileName();
 
-                var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
+                //var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
                 if (!Directory.Exists(folderPath))
                     Directory.CreateDirectory(folderPath);
 
-                var uniqueFileName = $"{productDto.SKUID}_{productDto.ImageName}"; 
 
+                var uniqueFileName = $"{productDto.SKUID}_{productDto.ImageName}";
+
+                // var uniqueFileName = GetFileName($"{productDto.SKUID}_{productDto.ImageName}");
                 var filePath = Path.Combine(folderPath, uniqueFileName);
+
+
+                if (System.IO.File.Exists(filePath)) 
+                    System.IO.File.Delete(filePath);
 
                 // Decode Base64 string to byte array
                 var base64Data = productDto.ImagePath.Split(',')[1];
                 byte[] imageBytes = Convert.FromBase64String(base64Data);
+
 
                 await System.IO.File.WriteAllBytesAsync(filePath, imageBytes);
 
@@ -249,7 +260,7 @@ namespace SmartBill.APIService.Controllers
                 //    await formFile.CopyToAsync(stream);
                 //}
 
-                productDto.ImagePath = filePath;
+                productDto.ImagePath = hostUrl+"/Uploads/Products/"+ uniqueFileName;
                 productDto.ImageName = uniqueFileName;
 
                 await masterServiceRepo.ExecuteProductAsync(productDto, changedBy);
@@ -288,6 +299,12 @@ namespace SmartBill.APIService.Controllers
             {
                 return this.SBadRequest(ex.Message);
             }
+        }
+
+        [NonAction]
+        private string GetFileName()
+        {
+            return webHostEnvironment.WebRootPath + "\\Uploads\\Products\\";
         }
 
         #endregion
