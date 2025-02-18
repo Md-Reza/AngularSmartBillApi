@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using QuestPDF;
+using QuestPDF.Infrastructure;
 using SmartBill.APIService.Interface;
 using SmartBill.APIService.Repository;
 using SmartBill.APIService.Security;
@@ -12,6 +14,9 @@ using System.Reflection;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Register the QuestPDF license
+Settings.License = LicenseType.Community;
 
 var configuration = builder.Configuration;
 builder.Services.AddAuthentication(options =>

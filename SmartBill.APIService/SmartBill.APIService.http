@@ -1,6 +1,0 @@
-@SmartBill.APIService_HostAddress = http://localhost:5108
-
-GET {{SmartBill.APIService_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
