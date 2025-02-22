@@ -260,7 +260,7 @@ namespace SmartBill.APIService.Controllers
                 //    await formFile.CopyToAsync(stream);
                 //}
 
-                productDto.ImagePath = hostUrl+"/Uploads/Products/"+ uniqueFileName;
+                productDto.ImagePath = "/Uploads/Products/"+ uniqueFileName;
                 productDto.ImageName = uniqueFileName;
 
                 await masterServiceRepo.ExecuteProductAsync(productDto, changedBy);
