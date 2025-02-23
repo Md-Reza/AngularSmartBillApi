@@ -5,6 +5,7 @@ using SmartBill.APIService.Handlers;
 using SmartBill.APIService.Interface;
 using SmartBillApi.DataTransferObject.DtoModel;
 using SmartBillApi.DataTransferObject.ViewModel;
+using System.Runtime.InteropServices;
 using System.Transactions;
 
 namespace SmartBill.APIService.Controllers
@@ -224,9 +225,13 @@ namespace SmartBill.APIService.Controllers
             if (productDto.PurchasePrice > productDto.SalePrice)
                 return this.SBadRequest("Sale price should not be less than purchase cost.");
 
-            var data = await masterServiceRepo.GetProductAsync(productDto.SKUID);
-            if (data != null)
-                return this.SBadRequest($"Already Exists this SKU: {productDto.SKUID}");
+            if (productDto.ProductID < 0)
+            {
+                var data = await masterServiceRepo.GetProductAsync(productDto.SKUID);
+                if (data != null)
+                    return this.SBadRequest($"Already Exists this SKU: {productDto.SKUID}");
+            }
+
 
             using (TransactionScope transaction = new(TransactionScopeAsyncFlowOption.Enabled))
             {
@@ -245,23 +250,38 @@ namespace SmartBill.APIService.Controllers
                 var filePath = Path.Combine(folderPath, uniqueFileName);
 
 
-                if (System.IO.File.Exists(filePath)) 
+                if (System.IO.File.Exists(filePath))
                     System.IO.File.Delete(filePath);
 
+
+                string directoryPath = @"wwwroot\Uploads\Products\";
+
+                string[] imageFiles = Directory.GetFiles(directoryPath, "*.*")
+                .Where(file => file.Contains(productDto.SKUID) &&
+                              (file.EndsWith(".png") || file.EndsWith(".jpg") || file.EndsWith(".jpeg") || file.EndsWith(".gif")))
+                .ToArray();
+
+                if (imageFiles.Length > 0)
+                {
+                    foreach (string file in imageFiles)
+                    {
+                        System.IO.File.Delete(file);
+                    }
+                }
+
                 // Decode Base64 string to byte array
-                var base64Data = productDto.ImagePath.Split(',')[1];
-                byte[] imageBytes = Convert.FromBase64String(base64Data);
 
+                if (!string.IsNullOrEmpty(productDto.ImagePath))
+                {
+                    var base64Data = productDto.ImagePath.Split(',')[1];
+                    byte[] imageBytes = Convert.FromBase64String(base64Data);
 
-                await System.IO.File.WriteAllBytesAsync(filePath, imageBytes);
+                    await System.IO.File.WriteAllBytesAsync(filePath, imageBytes);
 
-                //using (var stream = new FileStream(filePath, FileMode.Create))
-                //{
-                //    await formFile.CopyToAsync(stream);
-                //}
+                    productDto.ImagePath = "/Uploads/Products/" + uniqueFileName;
+                    productDto.ImageName = uniqueFileName;
+                }
 
-                productDto.ImagePath = "/Uploads/Products/"+ uniqueFileName;
-                productDto.ImageName = uniqueFileName;
 
                 await masterServiceRepo.ExecuteProductAsync(productDto, changedBy);
                 transaction.Complete();
